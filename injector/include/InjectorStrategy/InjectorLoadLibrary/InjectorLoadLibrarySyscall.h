@@ -8,7 +8,7 @@
 #include <windows.h>
 #include <ntdef.h>
 #include <iostream>
-#include "HellsGate/HellsGate.h"
+#include "HellsGate/SyscallManager.h"
 
 bool InjectProcessSyscall(const DWORD pid, const std::wstring dllPath);
 

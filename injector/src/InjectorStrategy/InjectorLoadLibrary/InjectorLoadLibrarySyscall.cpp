@@ -5,22 +5,6 @@
 #include "InjectorStrategy/InjectorLoadLibrary/InjectorLoadLibrarySyscall.h"
 
 
-NTSTATUS SyscallNtWriteVirtualMemory(HANDLE hProc, PVOID base, PVOID buf, SIZE_T size, PSIZE_T written, WORD ssn) {
-    return GenericInternalSyscall(
-            (PVOID)hProc, base, buf, (PVOID)size, (PVOID)written,
-            NULL, NULL, NULL, NULL, NULL, NULL, // Padding for unused args
-            ssn
-    );
-}
-
-NTSTATUS SyscallNtCreateThreadEx(PHANDLE hThread, ACCESS_MASK access, PVOID objAttr, HANDLE hProc, PVOID start, PVOID arg, ULONG flags, ULONG_PTR zero, SIZE_T stack, SIZE_T maxStack, PVOID attrList, WORD ssn) {
-    return GenericInternalSyscall(
-            (PVOID)hThread, (PVOID)access, objAttr, hProc, start,
-            arg, (PVOID)flags, (PVOID)zero, (PVOID)stack, (PVOID)maxStack, attrList,
-            ssn
-    );
-}
-
 
 bool InjectProcessSyscall(const DWORD pid, const std::wstring dllPath) {
 
@@ -49,15 +33,13 @@ bool InjectProcessSyscall(const DWORD pid, const std::wstring dllPath) {
 
     SIZE_T bytesWritten;
 
-    WORD ntWriteVirtualMemorySSN = HellsGate("NtWriteVirtualMemory");
 
-    NTSTATUS status = SyscallNtWriteVirtualMemory(
+    NTSTATUS status = SyscallManager::getInstance().SyscallNtWriteVirtualMemory(
             hProcess,
             externalAddress,
             (PVOID)dllPath.c_str(),
             dllPathSize,
-            &bytesWritten,
-            ntWriteVirtualMemorySSN // Pass the SSN as the last argument
+            &bytesWritten
     );
 
 //    if (bytesWritten != dllPathSize) {
@@ -77,10 +59,8 @@ bool InjectProcessSyscall(const DWORD pid, const std::wstring dllPath) {
         return false;
     }
 
-    WORD ntCreateThreadExSSN = HellsGate("NtCreateThreadEx");
-
     HANDLE hTread = NULL;
-    SyscallNtCreateThreadEx(
+    SyscallManager::getInstance().SyscallNtCreateThreadEx(
             &hTread,                                    // Thread handle (output)
             THREAD_ALL_ACCESS,                           // Desired access
             NULL,                                        // Object attributes
@@ -91,8 +71,7 @@ bool InjectProcessSyscall(const DWORD pid, const std::wstring dllPath) {
             0,                                           // ZeroBits
             0,                                           // Stack size (default)
             0,                                           // Maximum stack size
-            NULL,                                         // Attribute list
-            ntCreateThreadExSSN                          // Pass the SSN as the last argument
+            NULL                                       // Attribute list
     );
 
     if (hTread == NULL) {

