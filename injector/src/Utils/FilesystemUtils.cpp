@@ -75,3 +75,25 @@ void ExtractLibrary() {
         std::cout << "Library extracted to " << filename << std::endl;
     }
 }
+
+std::vector<BYTE> ReadFileToBuffer(const std::wstring& wPath) {
+
+    std::filesystem::path filePath(wPath);
+
+    std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+
+    if (!file.is_open()) {
+        return {};
+    }
+
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::vector<BYTE> localBuffer;
+    if (size > 0) {
+        localBuffer.resize(static_cast<size_t>(size));
+        file.read(reinterpret_cast<char*>(localBuffer.data()), size);
+    }
+
+    return localBuffer;
+}

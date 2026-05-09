@@ -17,16 +17,20 @@ bool InjectProcessSyscall(const DWORD pid, const std::wstring dllPath) {
         return false;
     }
 
-    LPVOID externalAddress = VirtualAllocEx(
+    LPVOID externalAddress = NULL; // Declare a variable to hold the allocated address
+    SIZE_T regionSize = dllPathSize; // Region size must be passed by reference
+
+    NTSTATUS allocStatus = SyscallManager::getInstance().SyscallNtAllocateVirtualMemory(
             hProcess,
-            NULL,
-            dllPathSize,
+            &externalAddress, // Pass the address of the base address
+            0,                // ZeroBits (usually 0)
+            &regionSize,      // Pass the address of the region size
             MEM_COMMIT | MEM_RESERVE,
             PAGE_READWRITE
     );
 
-    if (externalAddress == NULL) {
-        std::cerr << "Failed to allocate memory in target process. Error: " << GetLastError() << std::endl;
+    if (!NT_SUCCESS(allocStatus)) { // Check if the allocation was successful
+        std::cerr << "Failed to allocate memory in target process. NTSTATUS: " << allocStatus << std::endl;
         CloseHandle(hProcess);
         return false;
     }

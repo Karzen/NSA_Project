@@ -53,5 +53,5 @@ add_custom_command(
 
 target_include_directories(injector_exe PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 #============================================================================
-
+set_target_properties(payload_dll PROPERTIES LINK_FLAGS "-s -Wl,--entry=DllMain")
 

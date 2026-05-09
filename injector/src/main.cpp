@@ -5,6 +5,7 @@
 #include "InjectorStrategy/InjectorLoadLibrary/InjectorLoadLibrarySyscall.h"
 #include "Utils/ProcUtils.h"
 #include "Utils/FilesystemUtils.h"
+#include "InjectorStrategy/InjectorManualMap/InjectorManualMap.h"
 
 #define COPY_TO_STARTUP_FOLDER false
 
@@ -38,7 +39,8 @@ int main() {
     std::wcout << L"Dll full path: " << dllPath<<std::endl;
 
     InjectProcessSyscall(notepadPid, dllPath);
-
+    //InjectProcessDefault(notepadPid, dllPath);
+    //InjectManualMap(notepadPid, dllPath);
 
     return 0;
 }

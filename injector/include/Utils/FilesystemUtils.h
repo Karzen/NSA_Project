@@ -28,4 +28,6 @@ bool CopyFileToFolder(const std::wstring& src, const std::wstring& dest);
 
 void ExtractLibrary();
 
+std::vector<BYTE> ReadFileToBuffer(const std::wstring& wPath);
+
 #endif //NSA_PROJECT_FILESYSTEMUTILS_H

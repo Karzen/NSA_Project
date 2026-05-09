@@ -32,6 +32,9 @@ public:
 
     NTSTATUS SyscallNtWriteVirtualMemory(HANDLE hProc, PVOID base, PVOID buf, SIZE_T size, PSIZE_T written);
     NTSTATUS SyscallNtCreateThreadEx(PHANDLE hThread, ACCESS_MASK access, PVOID objAttr, HANDLE hProc, PVOID start, PVOID arg, ULONG flags, ULONG_PTR zero, SIZE_T stack, SIZE_T maxStack, PVOID attrList);
+    NTSTATUS SyscallNtAllocateVirtualMemory(HANDLE hProc, PVOID* base, ULONG_PTR zeroBits, PSIZE_T size, ULONG allocationType, ULONG protect);
+
+    //NtOpenProcess
 
     WORD GetSSNOfFunction(const std::string& functionName);
 

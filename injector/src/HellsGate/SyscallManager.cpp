@@ -5,7 +5,7 @@
 #include "HellsGate/SyscallManager.h"
 
 
-std::vector<std::wstring> SyscallManager::functions = {L"NtWriteVirtualMemory", L"NtCreateThreadEx"};
+std::vector<std::wstring> SyscallManager::functions = {L"NtWriteVirtualMemory", L"NtCreateThreadEx", L"NtAllocateVirtualMemory", L"NtOpenProcess"};
 
 NTSTATUS SyscallManager::SyscallNtWriteVirtualMemory(HANDLE hProc, PVOID base, PVOID buf, SIZE_T size, PSIZE_T written) {
 
@@ -28,6 +28,19 @@ NTSTATUS SyscallManager::SyscallNtCreateThreadEx(PHANDLE hThread, ACCESS_MASK ac
             ssn
     );
 }
+
+NTSTATUS SyscallManager::SyscallNtAllocateVirtualMemory(HANDLE hProc, PVOID* base, ULONG_PTR zeroBits, PSIZE_T size, ULONG allocationType, ULONG protect) {
+
+    auto ssn = GetSSNOfFunction("NtAllocateVirtualMemory");
+
+    return GenericInternalSyscall(
+            (PVOID)hProc, (PVOID)base, (PVOID)zeroBits, size,
+            (PVOID)allocationType, (PVOID)protect,
+            NULL, NULL, NULL, NULL, NULL,
+            ssn
+    );
+}
+
 
 SyscallManager& SyscallManager::getInstance() {
     static SyscallManager instance;
